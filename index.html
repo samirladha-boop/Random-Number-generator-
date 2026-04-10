@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Random Number Generator (Pro)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: 0.3s;
+    }
+
+    .dark {
+      background: #111;
+      color: white;
+    }
+
+    .light {
+      background: #f4f6f8;
+      color: black;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 42px;
+    }
+
+    input {
+      width: 140px;
+      padding: 15px;
+      font-size: 24px;
+      margin: 10px;
+      text-align: center;
+      border-radius: 10px;
+      border: none;
+    }
+
+    button {
+      width: 90%;
+      padding: 18px;
+      font-size: 24px;
+      margin: 10px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .generate {
+      background: #00c853;
+      color: white;
+    }
+
+    .copy {
+      background: #333;
+      color: white;
+    }
+
+    .toggle {
+      background: #ff9800;
+      color: white;
+    }
+
+    #result {
+      font-size: 100px;
+      margin: 40px 0;
+      font-weight: bold;
+    }
+
+    .presets button {
+      width: auto;
+      padding: 12px 18px;
+      font-size: 20px;
+      background: #2979ff;
+      color: white;
+    }
+
+  </style>
+</head>
+
+<body class="dark">
+
+  <div class="app">
+    <h1>Random Number</h1>
+
+    <input type="number" id="min" placeholder="Min">
+    <input type="number" id="max" placeholder="Max">
+
+    <button class="generate" onclick="generate()">GENERATE</button>
+
+    <div id="result">-</div>
+
+    <button class="copy" onclick="copyNumber()">COPY</button>
+    <button class="toggle" onclick="toggleTheme()">TOGGLE THEME</button>
+
+    <div class="presets">
+      <p>Quick Picks</p>
+      <button onclick="setRange(1,10)">1–10</button>
+      <button onclick="setRange(1,100)">1–100</button>
+      <button onclick="setRange(1,1000)">1–1000</button>
+    </div>
+  </div>
+
+  <audio id="sound">
+    <source src="https://www.soundjay.com/button/sounds/button-3.mp3">
+  </audio>
+
+  <script>
+    function generate() {
+      let min = parseInt(document.getElementById("min").value);
+      let max = parseInt(document.getElementById("max").value);
+
+      if (isNaN(min) || isNaN(max)) {
+        document.getElementById("result").innerText = "Enter numbers!";
+        return;
+      }
+
+      if (min > max) {
+        document.getElementById("result").innerText = "Min > Max!";
+        return;
+      }
+
+      let resultEl = document.getElementById("result");
+
+      // Animation effect
+      let count = 0;
+      let interval = setInterval(() => {
+        resultEl.innerText = Math.floor(Math.random() * (max - min + 1)) + min;
+        count++;
+        if (count > 15) {
+          clearInterval(interval);
+          let finalNum = Math.floor(Math.random() * (max - min + 1)) + min;
+          resultEl.innerText = finalNum;
+
+          // Play sound
+          document.getElementById("sound").play();
+        }
+      }, 50);
+    }
+
+    function copyNumber() {
+      let text = document.getElementById("result").innerText;
+      navigator.clipboard.writeText(text);
+    }
+
+    function setRange(min, max) {
+      document.getElementById("min").value = min;
+      document.getElementById("max").value = max;
+    }
+
+    function toggleTheme() {
+      let body = document.body;
+      if (body.classList.contains("dark")) {
+        body.classList.remove("dark");
+        body.classList.add("light");
+        localStorage.setItem("theme", "light");
+      } else {
+        body.classList.remove("light");
+        body.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+      }
+    }
+
+    // Load saved theme
+    window.onload = function() {
+      let saved = localStorage.getItem("theme");
+      if (saved === "light") {
+        document.body.classList.remove("dark");
+        document.body.classList.add("light");
+      }
+    }
+  </script>
+
+</body>
+</html>
